@@ -20,10 +20,10 @@
     <meta property="og:site_name" content="" />
     <meta property="og:type" content="article" />
     <meta property="og:title" content="MSVC2015 on Debian with Wine and Maiken" />
-    <meta property="og:description" content="I&amp;#8217;m not sure if the Wine in apt is multilib so for this I recommend building from source, as from. My Linux environment Mint 17.1 GCC 5.3 (Don&amp;#8217;t use 5.2) My Windows environment..." />
+    <meta property="og:description" content="I&amp;#8217;m not sure if the Wine in apt is multilib so for this I recommend building from source as described below. My Linux environment Mint 17.1 GCC 5.3 (Don&amp;#8217;t use 5.2) My Windows..." />
     <meta property="og:url" content="https://dekken.github.io/2015/12/29/MSVC2015-on-Debian-with-Wine-and-Maiken.html" />
     <meta property="article:published_time" content="2015-12-29T00:00:00.000Z" />
-    <meta property="article:modified_time" content="2015-12-31T13:58:44.168Z" />
+    <meta property="article:modified_time" content="2015-12-31T14:04:44.683Z" />
     <meta property="article:tag" content="Debian" />
     <meta property="article:tag" content="Wine" />
     <meta property="article:tag" content="GCC" />
@@ -31,7 +31,7 @@
     
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="MSVC2015 on Debian with Wine and Maiken" />
-    <meta name="twitter:description" content="I&amp;#8217;m not sure if the Wine in apt is multilib so for this I recommend building from source, as from. My Linux environment Mint 17.1 GCC 5.3 (Don&amp;#8217;t use 5.2) My Windows environment..." />
+    <meta name="twitter:description" content="I&amp;#8217;m not sure if the Wine in apt is multilib so for this I recommend building from source as described below. My Linux environment Mint 17.1 GCC 5.3 (Don&amp;#8217;t use 5.2) My Windows..." />
     <meta name="twitter:url" content="https://dekken.github.io/2015/12/29/MSVC2015-on-Debian-with-Wine-and-Maiken.html" />
     
     <script type="application/ld+json">
@@ -49,9 +49,9 @@
     "headline": "MSVC2015 on Debian with Wine and Maiken",
     "url": "https://dekken.github.io/2015/12/29/MSVC2015-on-Debian-with-Wine-and-Maiken.html",
     "datePublished": "2015-12-29T00:00:00.000Z",
-    "dateModified": "2015-12-31T13:58:44.168Z",
+    "dateModified": "2015-12-31T14:04:44.683Z",
     "keywords": "Debian,  Wine,  GCC,  MSVC",
-    "description": "I&amp;#8217;m not sure if the Wine in apt is multilib so for this I recommend building from source, as from. My Linux environment Mint 17.1 GCC 5.3 (Don&amp;#8217;t use 5.2) My Windows environment..."
+    "description": "I&amp;#8217;m not sure if the Wine in apt is multilib so for this I recommend building from source as described below. My Linux environment Mint 17.1 GCC 5.3 (Don&amp;#8217;t use 5.2) My Windows..."
 }
     </script>
 
@@ -84,8 +84,7 @@
 
         <section class="post-content">
             <div class="paragraph">
-<p>I&#8217;m not sure if the <strong>Wine</strong> in apt is multilib so for this I recommend building from <a href="https://ftp.winehq.org/wine/source/1.8/wine-1.8.tar.bz2">source</a>, as
-<a href="http://wiki.winehq.org/BuildingWine#head-51fce0c42b765db8e28b8e2d26a1ca2ea7d3c0a9">from</a>.</p>
+<p>I&#8217;m not sure if the <strong>Wine</strong> in apt is multilib so for this I recommend building from source as described below.</p>
 </div>
 <div class="ulist">
 <div class="title">My Linux environment</div>
@@ -117,7 +116,7 @@
 The environment variable WINEPREFIX only uses absolute paths, so change all instances of "<strong>/home/&lt;user&gt;</strong>" to your home directory. Wine might complain that you don&#8217;t have certain things installed when running <strong>winecfg</strong>, none are required for this to work.</p>
 </div>
 <div class="listingblock">
-<div class="title">wine</div>
+<div class="title">wine from source</div>
 <div class="content">
 <pre>cd ~/
 mkdir -p wine
@@ -139,7 +138,7 @@ WINEPREFIX=/home/&lt;user&gt;/.wine64 ~/wine/64/wine64 winecfg</pre>
 </div>
 </div>
 <div class="listingblock">
-<div class="title">maiken</div>
+<div class="title">maiken from source</div>
 <div class="content">
 <pre>cd ~/
 mkdir -p tmp
@@ -156,7 +155,7 @@ touch ~/.maiken/win32.yaml ~/.maiken/win64.yaml</pre>
 <p>Edit ~/.maiken/win32.yaml and ~/.maiken/win64.yaml so they have the appropriate paths for your MSVC installation.</p>
 </div>
 <div class="listingblock">
-<div class="title">~/.maiken/win32.yaml</div>
+<div class="title">File: ~/.maiken/win32.yaml</div>
 <div class="content">
 <pre>local:
     repo: ~/.maiken/repos/win
@@ -184,7 +183,7 @@ file:
 </div>
 </div>
 <div class="listingblock">
-<div class="title">~/.maiken/win64.yaml</div>
+<div class="title">File: ~/.maiken/win64.yaml</div>
 <div class="content">
 <pre>local:
     repo: ~/.maiken/repos/win
@@ -239,7 +238,7 @@ Copy them to to their respective system32 directories.</p>
 x64: ~/.wine64/drive_c/windows/system32</p>
 </div>
 <div class="listingblock">
-<div class="title">Save the following as a wine.reg</div>
+<div class="title">File: wine.reg</div>
 <div class="content">
 <pre>REGEDIT4
 
@@ -264,10 +263,10 @@ WINEPREFIX=/home/&lt;user&gt;/.wine64 ~/wine/64/wine64 regedit wine.reg</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Configuring your windows PATH, can be done directly editing files ~/.wine(64)/user.reg like the following</p>
+<p>Configuring your windows PATH, can be done directly editing the file user.reg.</p>
 </div>
 <div class="listingblock">
-<div class="title">x86</div>
+<div class="title">File: ~/.wine/user.reg</div>
 <div class="content">
 <pre>[Environment] 1451517826
 #time=1d143592182f07e
@@ -275,7 +274,7 @@ WINEPREFIX=/home/&lt;user&gt;/.wine64 ~/wine/64/wine64 regedit wine.reg</pre>
 </div>
 </div>
 <div class="listingblock">
-<div class="title">x64</div>
+<div class="title">File: ~/.wine64/user.reg</div>
 <div class="content">
 <pre>[Environment] 1451517826
 #time=1d143592182f07e
