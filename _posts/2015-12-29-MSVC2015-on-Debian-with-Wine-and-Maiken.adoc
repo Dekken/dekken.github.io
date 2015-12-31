@@ -46,7 +46,7 @@ touch ~/.maiken/win32.yaml ~/.maiken/win64.yaml
 ----
 
 
-Edit ~/.maiken/win32 and ~/.maiken/win64 so they have the appropriate paths for your MSVC installation.
+Edit ~/.maiken/win32.yaml and ~/.maiken/win64.yaml so they have the appropriate paths for your MSVC installation.
 
 .~/.maiken/win32.yaml
 ----
@@ -188,6 +188,6 @@ link:https://bugs.winehq.org/show_bug.cgi?id=39872[WineHQ].
 
 To see for yourself run
 ----
-cd ~/tmp/maiken/
+cd ~/tmp/maiken
 KLOG=3 ./mkn_nix2win clean build -dtKa -EHsc -x win64
 ----
