@@ -20,14 +20,18 @@
     <meta property="og:site_name" content="" />
     <meta property="og:type" content="article" />
     <meta property="og:title" content="MSVC2015 on Debian with Wine and Maiken" />
-    <meta property="og:description" content="It works (32bit), more to follow...." />
+    <meta property="og:description" content="My environment Linux Mint 17 GCC 5.3 (Don&amp;#8217;t use 5.2) I&amp;#8217;m not sure if the wine in apt is multilib so for this I recommend building from source, and following this guide. Commands given..." />
     <meta property="og:url" content="https://dekken.github.io/2015/12/29/MSVC2015-on-Debian-with-Wine-and-Maiken.html" />
     <meta property="article:published_time" content="2015-12-29T00:00:00.000Z" />
-    <meta property="article:modified_time" content="2015-12-30T21:49:06.101Z" />
+    <meta property="article:modified_time" content="2015-12-31T00:14:54.699Z" />
+    <meta property="article:tag" content="Debian" />
+    <meta property="article:tag" content="Wine" />
+    <meta property="article:tag" content="GCC" />
+    <meta property="article:tag" content="MSVC" />
     
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="MSVC2015 on Debian with Wine and Maiken" />
-    <meta name="twitter:description" content="It works (32bit), more to follow...." />
+    <meta name="twitter:description" content="My environment Linux Mint 17 GCC 5.3 (Don&amp;#8217;t use 5.2) I&amp;#8217;m not sure if the wine in apt is multilib so for this I recommend building from source, and following this guide. Commands given..." />
     <meta name="twitter:url" content="https://dekken.github.io/2015/12/29/MSVC2015-on-Debian-with-Wine-and-Maiken.html" />
     
     <script type="application/ld+json">
@@ -45,8 +49,9 @@
     "headline": "MSVC2015 on Debian with Wine and Maiken",
     "url": "https://dekken.github.io/2015/12/29/MSVC2015-on-Debian-with-Wine-and-Maiken.html",
     "datePublished": "2015-12-29T00:00:00.000Z",
-    "dateModified": "2015-12-30T21:49:06.101Z",
-    "description": "It works (32bit), more to follow...."
+    "dateModified": "2015-12-31T00:14:54.699Z",
+    "keywords": "Debian,  Wine,  GCC,  MSVC",
+    "description": "My environment Linux Mint 17 GCC 5.3 (Don&amp;#8217;t use 5.2) I&amp;#8217;m not sure if the wine in apt is multilib so for this I recommend building from source, and following this guide. Commands given..."
 }
     </script>
 
@@ -54,7 +59,7 @@
     <link rel="alternate" type="application/rss+xml" title="" href="https://dekken.github.io/rss" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/default.min.css">
 </head>
-<body class="post-template">
+<body class="post-template tag-Debian tag-Wine tag-GCC tag-MSVC">
 
     
 
@@ -68,18 +73,216 @@
 
 <main class="content" role="main">
 
-    <article class="post">
+    <article class="post tag-Debian tag-Wine tag-GCC tag-MSVC">
 
         <header class="post-header">
             <h1 class="post-title">MSVC2015 on Debian with Wine and Maiken</h1>
             <section class="post-meta">
-                <time class="post-date" datetime="2015-12-29">29 December 2015</time> 
+                <time class="post-date" datetime="2015-12-29">29 December 2015</time>  on <a href="https://dekken.github.io/tag/Debian">Debian</a>, <a href="https://dekken.github.io/tag/Wine"> Wine</a>, <a href="https://dekken.github.io/tag/GCC"> GCC</a>, <a href="https://dekken.github.io/tag/MSVC"> MSVC</a>
             </section>
         </header>
 
         <section class="post-content">
-            <div class="paragraph">
-<p>It works (32bit), more to follow.</p>
+            <div class="ulist">
+<div class="title">My environment</div>
+<ul>
+<li>
+<p>Linux Mint 17</p>
+</li>
+<li>
+<p>GCC 5.3 (Don&#8217;t use 5.2)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>I&#8217;m not sure if the wine in apt is multilib so for this I recommend building from <a href="https://ftp.winehq.org/wine/source/1.8/wine-1.8.tar.bz2">source</a>, and following this
+<a href="http://wiki.winehq.org/BuildingWine#head-51fce0c42b765db8e28b8e2d26a1ca2ea7d3c0a9">guide</a>.</p>
+</div>
+<div class="paragraph">
+<p>Commands given for convenience. Configuring wine may fail if libraries are missing, and libfreetype doesn&#8217;t like having 32 and 64bit libraries simultaneously.</p>
+</div>
+<div class="listingblock">
+<div class="title">wine</div>
+<div class="content">
+<pre>cd ~/
+mkdir -p wine
+cd wine
+mkdir -p 32 64
+wget https://ftp.winehq.org/wine/source/1.8/wine-1.8.tar.bz2
+tar xf wine-1.8.tar.bz2
+cd 64
+sudo apt-get install libfreetype6-dev
+../wine-1.8/configure --enable-win64
+make -j4
+cd ../32
+../wine-1.8/configure --with-wine64=../64
+make -j4
+
+WINEARCH=win32 ~/wine/64/wine winecfg
+WINEPREFIX=/home/&lt;user&gt;/.wine64 ~/wine/64/wine64 winecfg</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">maiken</div>
+<div class="content">
+<pre>cd ~/
+mkdir -p tmp
+cd tmp
+git clone http://github.com/dekken/maiken.git -b master maiken
+cd maiken
+make nix
+
+KLOG=3 ./mkn clean build -dtKa "-O2 -D__KUL_OS__=\"win\" -D_MKN_REMOTE_EXEC_=0" -l -pthread
+mv ./bin/build/mkn mkn_nix2win
+touch ~/.maiken/win32 ~/.maiken/win64</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Edit ~/.maiken/win32 and ~/.maiken/win64 so they have the appropriate paths for your MSVC installation.</p>
+</div>
+<div class="listingblock">
+<div class="title">win32</div>
+<div class="content">
+<pre>local:
+    repo: ~/.maiken/repos/win
+inc:
+    /path/to/win10SDK/Include/10.0.10240.0/ucrt
+    /path/to/win10SDK/Include/10.0.10240.0/um
+    /path/to/win10SDK/Include/10.0.10240.0/shared
+    /path/to/VSC15/VC/include
+path:
+    /path/to/win10SDK/Lib/10.0.10240.0/um/x86
+    /path/to/win10SDK/Lib/10.0.10240.0/ucrt/x86
+    /path/to/VSC15/VC/lib
+env:
+  - name: PATH
+    mode: prepend
+    value: ~/wine/64:/path/to/VSC15/VC/bin
+  - name: WINEDEBUG
+    mode: replace
+    value: -all
+file:
+  - type: cpp:c
+    compiler: wine wait4 cl
+    archiver: wine wait4 lib
+    linker: wine wait4 link</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">win64</div>
+<div class="content">
+<pre>local:
+    repo: ~/.maiken/repos/win
+inc:
+    /path/to/win10SDK/Include/10.0.10240.0/ucrt
+    /path/to/win10SDK/Include/10.0.10240.0/um
+    /path/to/win10SDK/Include/10.0.10240.0/shared
+    /path/to/VSC15/VC/include
+path:
+    /path/to/win10SDK/Lib/10.0.10240.0/um/x64
+    /path/to/win10SDK/Lib/10.0.10240.0/ucrt/x64
+    /path/to/VSC15/VC/lib/amd64
+env:
+  - name: PATH
+    mode: prepend
+    value: ~/wine/64:/path/to/VSC15/VC/bin/amd64
+  - name: WINEDEBUG
+    mode: replace
+    value: -all
+file:
+  - type: cpp:c
+    compiler: wine64 wait4 cl
+    archiver: wine64 wait4 lib
+    linker: wine64 wait4 link</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Get the program wait4 from my github. Wine passes of the execution string to wineserve and the process exits, so we use an intermediary process to wait for all child processes within wine.</p>
+</div>
+<div class="listingblock">
+<div class="title">wait4</div>
+<div class="content">
+<pre>cd ~/tmp
+mkdir -p wine32 wine64
+cd wine32
+wget https://github.com/Dekken/wait4/raw/master/bin/win_x86/wait4.exe
+mv wait4.exe ~/.wine/drive_c/windows/system32
+cd ../wine64
+wget https://github.com/Dekken/wait4/raw/master/bin/win_x64/wait4.exe
+mv wait4.exe ~/.wine64/drive_c/windows/system32</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Get required dlls for x86/x64 listed in the registry file.</p>
+</div>
+<div class="listingblock">
+<div class="title">Save the following as a wine.reg</div>
+<div class="content">
+<pre>REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Wine\DllOverrides]
+"api-ms-win-crt-locale-l1-1-0"="native"
+"api-ms-win-crt-runtime-l1-1-0"="native"
+"api-ms-win-crt-stdio-l1-1-0"="native"
+"api-ms-win-crt-heap-l1-1-0"="native"
+"api-ms-win-crt-conio-l1-1-0"="native"
+"msvcp140"="native"
+"vcruntime140"="native"
+"ucrtbase"="native"</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then run as</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>~/wine/64/wine regedit wine.reg
+WINEPREFIX=/home/&lt;user&gt;/.wine64 ~/wine/64/wine64 regedit wine.reg</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Configure your windows path, can be done directly editing files ~/.wine(64)/user.reg like the following</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[Environment] 1451517826
+#time=1d143592182f07e
+"PATH"="/path/to/VSC15U1/VC/bin"</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Or running regedit for each version and editing the HKEY_CURRENT_USER &#8594; Environment &#8594; New String value</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>32
+~/wine/64/wine regedit
+
+64
+WINEPREFIX=/home/&lt;user&gt;/.wine64 ~/wine/64/wine64 regedit</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now you should be able to build a Windows maiken binary on linux</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>cd ~/tmp/maiken/
+KLOG=3 ./mkn_nix2win clean build -dtKa -EHsc -x win32</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>64bit works sometimes, but doesn&#8217;t for maiken, a bug has been created on
+<a href="https://bugs.winehq.org/show_bug.cgi?id=39872">WineHQ</a>.</p>
+</div>
+<div class="paragraph">
+<p>To see for yourself run</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>cd ~/tmp/maiken/
+KLOG=3 ./mkn_nix2win clean build -dtKa -EHsc -x win64</pre>
+</div>
 </div>
         </section>
 
