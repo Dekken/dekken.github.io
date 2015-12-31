@@ -119,7 +119,7 @@ wget https://github.com/Dekken/wait4/raw/master/bin/win_x64/wait4.exe
 mv wait4.exe ~/.wine64/drive_c/windows/system32
 ----
 
-Get required dlls for x86/x64 listed in the registry file.
+Get required dlls for x86/x64 listed in the registry file below. 
 
 .Save the following as a wine.reg
 ----
@@ -135,9 +135,13 @@ REGEDIT4
 "vcruntime140"="native"
 "ucrtbase"="native"
 ----
+Copy them to to their respective system32 directories. 
+[%hardbreaks]
+x86: ~/.wine/drive_c/windows/system32
+x64: ~/.wine64/drive_c/windows/system32
+[hardbreaks]
 
-Then run as
-
+Then run the registry file as follows:
 ----
 ~/wine/64/wine regedit wine.reg
 WINEPREFIX=/home/<user>/.wine64 ~/wine/64/wine64 regedit wine.reg
