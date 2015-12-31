@@ -6,8 +6,8 @@
  - GCC 5.3 (Don't use 5.2)
  
 
-I'm not sure if the wine in apt is multilib so for this I recommend building from link:https://ftp.winehq.org/wine/source/1.8/wine-1.8.tar.bz2[source], as from
-link:http://wiki.winehq.org/BuildingWine#head-51fce0c42b765db8e28b8e2d26a1ca2ea7d3c0a9[guide].
+I'm not sure if the wine in apt is multilib so for this I recommend building from link:https://ftp.winehq.org/wine/source/1.8/wine-1.8.tar.bz2[source], as 
+link:http://wiki.winehq.org/BuildingWine#head-51fce0c42b765db8e28b8e2d26a1ca2ea7d3c0a9[from].
 
 
 Configuring wine may fail if libraries are missing, and libfreetype doesn't like having 32 and 64bit libraries simultaneously.  
