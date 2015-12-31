@@ -25,6 +25,7 @@ sudo apt-get install libfreetype6-dev
 ../wine-1.8/configure --enable-win64
 make -j4
 cd ../32
+sudo apt-get install libfreetype6-dev:i386
 ../wine-1.8/configure --with-wine64=../64
 make -j4
 
