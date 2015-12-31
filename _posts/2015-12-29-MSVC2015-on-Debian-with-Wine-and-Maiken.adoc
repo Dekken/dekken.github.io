@@ -1,8 +1,7 @@
 = MSVC2015 on Debian with Wine and Maiken
 :hp-tags: Debian, Wine, GCC, MSVC
 
-I'm not sure if the *Wine* in apt is multilib so for this I recommend building from link:https://ftp.winehq.org/wine/source/1.8/wine-1.8.tar.bz2[source], as 
-link:http://wiki.winehq.org/BuildingWine#head-51fce0c42b765db8e28b8e2d26a1ca2ea7d3c0a9[from].
+I'm not sure if the *Wine* in apt is multilib so for this I recommend building from source as described below.
 
 .My Linux environment
  - Mint 17.1
@@ -16,7 +15,7 @@ link:http://wiki.winehq.org/BuildingWine#head-51fce0c42b765db8e28b8e2d26a1ca2ea7
 Configuring wine may fail if libraries are missing, and libfreetype doesn't like having 32 and 64bit libraries simultaneously.
 The environment variable WINEPREFIX only uses absolute paths, so change all instances of "*/home/<user>*" to your home directory. Wine might complain that you don't have certain things installed when running *winecfg*, none are required for this to work.
 
-.wine
+.wine from source
 ----
 cd ~/
 mkdir -p wine
@@ -37,7 +36,7 @@ WINEARCH=win32 ~/wine/64/wine winecfg
 WINEPREFIX=/home/<user>/.wine64 ~/wine/64/wine64 winecfg
 ----
 
-.maiken
+.maiken from source
 ----
 cd ~/
 mkdir -p tmp
@@ -53,7 +52,7 @@ touch ~/.maiken/win32.yaml ~/.maiken/win64.yaml
 
 Edit ~/.maiken/win32.yaml and ~/.maiken/win64.yaml so they have the appropriate paths for your MSVC installation.
 
-.~/.maiken/win32.yaml
+.File: ~/.maiken/win32.yaml
 ----
 local:
     repo: ~/.maiken/repos/win
@@ -80,7 +79,7 @@ file:
     linker: wine wait4 link
 ----
 
-.~/.maiken/win64.yaml
+.File: ~/.maiken/win64.yaml
 ----
 local:
     repo: ~/.maiken/repos/win
@@ -131,7 +130,7 @@ x86: ~/.wine/drive_c/windows/system32
 x64: ~/.wine64/drive_c/windows/system32
 [hardbreaks]
 
-.Save the following as a wine.reg
+.File: wine.reg
 ----
 REGEDIT4
 
@@ -152,16 +151,16 @@ Then run the registry file as follows:
 WINEPREFIX=/home/<user>/.wine64 ~/wine/64/wine64 regedit wine.reg
 ----
 
-Configuring your windows PATH, can be done directly editing files ~/.wine(64)/user.reg like the following
+Configuring your windows PATH, can be done directly editing the file user.reg.
 
-.x86
+.File: ~/.wine/user.reg
 ----
 [Environment] 1451517826
 #time=1d143592182f07e
 "PATH"="/path/to/VSC15U1/VC/bin"
 ----
 
-.x64
+.File: ~/.wine64/user.reg
 ----
 [Environment] 1451517826
 #time=1d143592182f07e
