@@ -1,4 +1,176 @@
 = MSVC2015 on Debian with Wine and Maiken
+:hp-tags: Debian, Wine, GCC, MSVC
+
+.My environment
+ - Linux Mint 17
+ - GCC 5.3 (Don't use 5.2)
+ 
+
+I'm not sure if the wine in apt is multilib so for this I recommend building from link:https://ftp.winehq.org/wine/source/1.8/wine-1.8.tar.bz2[source], and following this
+link:http://wiki.winehq.org/BuildingWine#head-51fce0c42b765db8e28b8e2d26a1ca2ea7d3c0a9[guide].
 
 
-It works (32bit), more to follow.
+Commands given for convenience. Configuring wine may fail if libraries are missing, and libfreetype doesn't like having 32 and 64bit libraries simultaneously.  
+
+.wine
+----
+cd ~/
+mkdir -p wine
+cd wine
+mkdir -p 32 64
+wget https://ftp.winehq.org/wine/source/1.8/wine-1.8.tar.bz2
+tar xf wine-1.8.tar.bz2
+cd 64
+sudo apt-get install libfreetype6-dev
+../wine-1.8/configure --enable-win64
+make -j4
+cd ../32
+../wine-1.8/configure --with-wine64=../64
+make -j4
+
+WINEARCH=win32 ~/wine/64/wine winecfg
+WINEPREFIX=/home/<user>/.wine64 ~/wine/64/wine64 winecfg
+----
+
+
+.maiken
+----
+cd ~/
+mkdir -p tmp
+cd tmp
+git clone http://github.com/dekken/maiken.git -b master maiken
+cd maiken
+make nix
+
+KLOG=3 ./mkn clean build -dtKa "-O2 -D__KUL_OS__=\"win\" -D_MKN_REMOTE_EXEC_=0" -l -pthread
+mv ./bin/build/mkn mkn_nix2win
+touch ~/.maiken/win32 ~/.maiken/win64
+----
+
+
+Edit ~/.maiken/win32 and ~/.maiken/win64 so they have the appropriate paths for your MSVC installation.
+
+.win32
+----
+local:
+    repo: ~/.maiken/repos/win
+inc:
+    /path/to/win10SDK/Include/10.0.10240.0/ucrt
+    /path/to/win10SDK/Include/10.0.10240.0/um
+    /path/to/win10SDK/Include/10.0.10240.0/shared
+    /path/to/VSC15/VC/include
+path:
+    /path/to/win10SDK/Lib/10.0.10240.0/um/x86
+    /path/to/win10SDK/Lib/10.0.10240.0/ucrt/x86
+    /path/to/VSC15/VC/lib
+env:
+  - name: PATH
+    mode: prepend
+    value: ~/wine/64:/path/to/VSC15/VC/bin
+  - name: WINEDEBUG
+    mode: replace
+    value: -all
+file:
+  - type: cpp:c
+    compiler: wine wait4 cl
+    archiver: wine wait4 lib
+    linker: wine wait4 link
+----
+
+.win64
+----
+local:
+    repo: ~/.maiken/repos/win
+inc:
+    /path/to/win10SDK/Include/10.0.10240.0/ucrt
+    /path/to/win10SDK/Include/10.0.10240.0/um
+    /path/to/win10SDK/Include/10.0.10240.0/shared
+    /path/to/VSC15/VC/include
+path:
+    /path/to/win10SDK/Lib/10.0.10240.0/um/x64
+    /path/to/win10SDK/Lib/10.0.10240.0/ucrt/x64
+    /path/to/VSC15/VC/lib/amd64
+env:
+  - name: PATH
+    mode: prepend
+    value: ~/wine/64:/path/to/VSC15/VC/bin/amd64
+  - name: WINEDEBUG
+    mode: replace
+    value: -all
+file:
+  - type: cpp:c
+    compiler: wine64 wait4 cl
+    archiver: wine64 wait4 lib
+    linker: wine64 wait4 link
+----
+
+Get the program wait4 from my github. Wine passes of the execution string to wineserve and the process exits, so we use an intermediary process to wait for all child processes within wine.
+
+.wait4
+----
+cd ~/tmp
+mkdir -p wine32 wine64
+cd wine32 
+wget https://github.com/Dekken/wait4/raw/master/bin/win_x86/wait4.exe
+mv wait4.exe ~/.wine/drive_c/windows/system32
+cd ../wine64
+wget https://github.com/Dekken/wait4/raw/master/bin/win_x64/wait4.exe
+mv wait4.exe ~/.wine64/drive_c/windows/system32
+----
+
+Get required dlls for x86/x64 listed in the registry file.
+
+.Save the following as a wine.reg
+----
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Wine\DllOverrides]
+"api-ms-win-crt-locale-l1-1-0"="native"
+"api-ms-win-crt-runtime-l1-1-0"="native"
+"api-ms-win-crt-stdio-l1-1-0"="native"
+"api-ms-win-crt-heap-l1-1-0"="native"
+"api-ms-win-crt-conio-l1-1-0"="native"
+"msvcp140"="native"
+"vcruntime140"="native"
+"ucrtbase"="native"
+----
+
+Then run as
+
+----
+~/wine/64/wine regedit wine.reg
+WINEPREFIX=/home/<user>/.wine64 ~/wine/64/wine64 regedit wine.reg
+----
+
+Configure your windows path, can be done directly editing files ~/.wine(64)/user.reg like the following
+
+----
+[Environment] 1451517826
+#time=1d143592182f07e
+"PATH"="/path/to/VSC15U1/VC/bin"
+----
+
+Or running regedit for each version and editing the HKEY_CURRENT_USER -> Environment -> New String value
+
+----
+32
+~/wine/64/wine regedit
+
+64
+WINEPREFIX=/home/<user>/.wine64 ~/wine/64/wine64 regedit
+----
+
+Now you should be able to build a Windows maiken binary on linux
+----
+cd ~/tmp/maiken/
+KLOG=3 ./mkn_nix2win clean build -dtKa -EHsc -x win32
+----
+
+64bit works sometimes, but doesn't for maiken, a bug has been created on 
+link:https://bugs.winehq.org/show_bug.cgi?id=39872[WineHQ].
+
+To see for yourself run
+----
+cd ~/tmp/maiken/
+KLOG=3 ./mkn_nix2win clean build -dtKa -EHsc -x win64
+----
