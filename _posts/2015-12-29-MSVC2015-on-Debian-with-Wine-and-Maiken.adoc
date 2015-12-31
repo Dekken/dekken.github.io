@@ -152,7 +152,7 @@ WINEPREFIX=/home/<user>/.wine64 ~/wine/64/wine64 regedit wine.reg
 ----
 
 We could use the same WINEPREFIX for both x86 and x64, but we need separate PATH variables so we split them.
-Configuring your windows PATH, can be done directly editing the file user.reg.
+Configuring your windows PATH can be done directly editing the file user.reg.
 
 .File: ~/.wine/user.reg
 ----
