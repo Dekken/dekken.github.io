@@ -105,7 +105,7 @@ file:
     linker: wine64 wait4 link
 ----
 
-Get the program wait4 from my github. Wine passes of the execution string to wineserve and the process exits, so we use an intermediary process to wait for all child processes within wine.
+Get the program wait4 from my github. Wine passes the execution string to wineserver and the process exits, so we use an intermediary process to wait for all child processes within wine to finish.
 
 .wait4
 ----
