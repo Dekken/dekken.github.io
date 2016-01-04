@@ -41,7 +41,7 @@ WINEPREFIX=/home/<user>/.wine64 ~/wine/64/wine64 winecfg
 cd ~/
 mkdir -p tmp
 cd tmp
-git clone http://github.com/dekken/maiken.git -b master maiken
+git clone http://github.com/dekken/maiken.git -b 0.7.7 maiken
 cd maiken
 make nix
 ./mkn build -dtKa "-O2 -std=c++14 -D__KUL_OS__=\"win\" -D_MKN_REMOTE_EXEC_=0" -l -pthread
