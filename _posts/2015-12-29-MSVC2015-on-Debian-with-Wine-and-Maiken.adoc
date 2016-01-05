@@ -43,7 +43,7 @@ mkdir -p tmp
 cd tmp
 git clone http://github.com/dekken/maiken.git -b 0.7.7 maiken
 cd maiken
-make nix
+make nix LDFLAGS="-pthread -static"
 ./mkn build -dtKa "-O2 -std=c++14 -D__KUL_OS__=\"win\" -D_MKN_REMOTE_EXEC_=0" -l -pthread
 mv ./bin/build/mkn mkn_nix2win
 touch ~/.maiken/win32.yaml ~/.maiken/win64.yaml
